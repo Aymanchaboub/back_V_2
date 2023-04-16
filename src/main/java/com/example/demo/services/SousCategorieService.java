@@ -40,5 +40,8 @@ public class SousCategorieService {
     public List<SousCategorie> getSousCategoriesByCategorieId(Long categorieId) {
         return sousCategorieRepository.findByCategorieId(categorieId);
     }
+    public List<SousCategorie> findByCategorieId(Long categorieId) {
+        return sousCategorieRepository.findByCategorieId(categorieId);
+    }
 
 }

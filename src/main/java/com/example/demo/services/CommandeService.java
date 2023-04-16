@@ -1,4 +1,6 @@
 package com.example.demo.services;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,9 +20,11 @@ public class CommandeService {
     
     @Autowired
     private UserRepository userRepositry;
+    @Autowired
+    UserRepository userRepository;
 
-    public List<Commande> getAllCommandes(Long userId) {
-        return commandeRepository.findByUser_Id(userId);
+    public List<Commande> getAllCommandes() {
+        return commandeRepository.findAll();
     }
 
     public Optional<Commande> getCommandeById(Long id, Long userId) {
@@ -59,4 +63,19 @@ public class CommandeService {
     public void deleteCommande(Long id, Long userId) {
         commandeRepository.deleteByIdAndUser_Id(id, userId);
     }
+    public String getNomByUserid(Long userId) {
+        Optional<User> optionalUser = userRepository.findById(userId);
+
+          return optionalUser.get().getUsername();
+
+      }
+
+      public String getEmailByUserid(Long userId) {
+        Optional<User> optionalUser = userRepository.findById(userId);
+          return optionalUser.get().getEmail();
+
+      }      
+      public LocalDateTime  getDateCreation(Long id) {
+          return commandeRepository.findDateCreationById(id);
+      }
 }

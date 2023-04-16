@@ -96,6 +96,11 @@ public class CartController {
     public Long getCartIdByCartItem(@RequestParam Long cartItemId) {
         return cartService.getCartIdByCartItem(cartItemId);
     }
+    @GetMapping("/cart/{cartId}/items")
+    public List<CartItem> getCartItems(@PathVariable Long cartId) {
+        return cartService.getCartItems(cartId);
+    }
+
 
 
 

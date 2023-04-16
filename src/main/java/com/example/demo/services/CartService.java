@@ -118,6 +118,10 @@ public class CartService {
         }
         return cart.getTotal();
     }
+    public List<CartItem> getCartItems(Long cartId) {
+        return cartItemRepositry.findByCartId(cartId);
+    }
+
     
 
     

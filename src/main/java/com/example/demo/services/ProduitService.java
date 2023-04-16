@@ -1,12 +1,16 @@
 package com.example.demo.services;
 
+import java.time.LocalDate;
 import java.util.List;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.demo.models.Offre;
 import com.example.demo.models.Produit;
+import com.example.demo.models.SousCategorie;
+import com.example.demo.repository.OffreRepository;
 import com.example.demo.repository.ProduitRepository;
 
 
@@ -16,6 +20,8 @@ public class ProduitService {
     
     @Autowired
     private ProduitRepository produitRepository;
+    @Autowired
+    private OffreRepository offreRepository;
 
     // Create a new produit
     public Produit createProduit(Produit produit) {
@@ -53,5 +59,29 @@ public class ProduitService {
         }
         produitRepository.delete(existingProduit);
         return true;
+    }
+    public void updateProductPrice(Long idProduit, double pourcentage,LocalDate dateExtraction) {
+        Produit produit = produitRepository.findById(idProduit)
+                 .orElseThrow(() -> new RuntimeException("Produit non trouvé"));
+        
+        double ancienPrix = produit.getPrix();
+        float nouveauPrix = (float) (ancienPrix - (ancienPrix * pourcentage / 100));
+        produit.setPrix(nouveauPrix);
+        produitRepository.save(produit);
+        
+        Offre offre = new Offre();
+        offre.setDateDeCreation(LocalDate.now());
+        offre.setDateDExtraction(dateExtraction); 
+        offre.setPourcentage(pourcentage);
+        offre.setProduit(produit);
+        offreRepository.save(offre);
+     }
+    public float getProductPriceHistory(Long idProduit) {
+        Produit produit = produitRepository.findById(idProduit)
+                 .orElseThrow(() -> new RuntimeException("Produit non trouvé"));
+        return produit.getPrix();
+     }
+    public List<Produit> getProduitsByCategorieId(Long souscategorieId) {
+        return produitRepository.findBySousCategorieId(souscategorieId);
     }
 }
