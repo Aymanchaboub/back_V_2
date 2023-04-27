@@ -16,8 +16,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.models.Offre;
 import com.example.demo.models.Produit;
 import com.example.demo.models.SousCategorie;
+import com.example.demo.repository.OffreRepository;
 import com.example.demo.services.ProduitService;
 
 @RestController
@@ -26,6 +28,8 @@ public class ProduitController {
     
     @Autowired
     private ProduitService produitService;
+    @Autowired
+    private OffreRepository offreRepo;
 
     // Create a new produit
     @PostMapping("/produits")
@@ -33,6 +37,17 @@ public class ProduitController {
     	System.out.println(produit.toString());
         Produit newProduit = produitService.createProduit(produit);
         return ResponseEntity.status(HttpStatus.CREATED).body(newProduit);
+    }
+    @GetMapping("/produits/offre")
+    public ResponseEntity<List<Offre>> getAllOffre(){
+    	List<Offre> offre=offreRepo.findAll();
+    	return ResponseEntity.ok(offre);
+    }
+    @GetMapping("/produits/getproduitid/{id}")
+    public Long getproduitidbyoffreid(@PathVariable Long id)
+    {
+    	Offre offre=offreRepo.findById(id).orElse(null);
+    	return offre.getProduit().getId();
     }
 
     // Retrieve all produits
@@ -85,9 +100,26 @@ public class ProduitController {
         float prixProduits = produitService.getProductPriceHistory(id);
         return ResponseEntity.ok(prixProduits);
     }
+    @GetMapping("/produits/quantity/{productId}")
+    public int getProductQuantity(@PathVariable Long productId) {
+        Produit product = produitService.getProduitById(productId);
+        return product.getQuantite();
+    }
+
+
     @GetMapping("/produits/ByID/{souscategorieId}")
     public List<Produit> getSousCategoriesByCategorieId(@PathVariable Long souscategorieId) {
     	System.out.println(souscategorieId);
         return produitService.getProduitsByCategorieId(souscategorieId);
     }
+    @PutMapping("/produits/{id}/increaseQuantity/{quantity}")
+    public ResponseEntity<Produit> increaseQuantity(@PathVariable Long id, @PathVariable int quantity) {
+        Produit produit = produitService.getProduitById(id);
+        int quantite = produit.getQuantite() - quantity;
+        produit.setQuantite(quantite);
+        Produit produitModifie = produitService.updateProduit(id,produit);
+        return ResponseEntity.ok().body(produitModifie);
+    }
+
+    
 }
