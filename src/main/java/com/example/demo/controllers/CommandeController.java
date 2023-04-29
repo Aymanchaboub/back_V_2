@@ -90,5 +90,9 @@ public class CommandeController {
         LocalDateTime dateCreation = commandeService.getDateCreation(id);
         return ResponseEntity.ok(dateCreation);
     }
-    
+    @GetMapping("commande/{userId}/pdf")
+    public List<Commande> getcommandebyuserid(@PathVariable Long userId)
+    {
+    	return (commandereposotry.findByUser_Id(userId));
+    }
 }

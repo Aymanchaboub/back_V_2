@@ -1,7 +1,9 @@
 package com.example.demo.controllers;
 
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -114,12 +116,21 @@ public class ProduitController {
     }
     @PutMapping("/produits/{id}/increaseQuantity/{quantity}")
     public ResponseEntity<Produit> increaseQuantity(@PathVariable Long id, @PathVariable int quantity) {
-        Produit produit = produitService.getProduitById(id);
-        int quantite = produit.getQuantite() - quantity;
+        
+    	Produit produit = produitService.getProduitById(id);
+    	int quantiteinitiale=produit.getQuantite();
+    	int quantite = produit.getQuantite() - quantity;
         produit.setQuantite(quantite);
         Produit produitModifie = produitService.updateProduit(id,produit);
         return ResponseEntity.ok().body(produitModifie);
     }
+    @GetMapping("/produits/{id}/dateextraction")
+    public LocalDate getDateExtractionByProduitId(@PathVariable("id") Long id) {
+    		Offre offre=offreRepo.getById(id);
+    		return offre.getDateDExtraction();
+        
+    }
+
 
     
 }
