@@ -22,6 +22,7 @@ import com.example.demo.models.User;
 import com.example.demo.repository.CommandeRepository;
 import com.example.demo.repository.LigneCommandeRepository;
 import com.example.demo.repository.UserRepository;
+import com.example.demo.services.CommandeService;
 import com.example.demo.services.LigneCommandeService;
 
 @RestController
@@ -36,6 +37,9 @@ public class LigneCommandeController {
     
     @Autowired
     private CommandeRepository commandeReposotory;
+    
+    @Autowired
+    private CommandeService commandeService;
 
     @Autowired
     private UserRepository userReposotry;
@@ -77,6 +81,10 @@ public class LigneCommandeController {
     @PutMapping("/lignescommandes/{id}/complete")
     public ResponseEntity<LigneCommande> updateLigneCommande(@PathVariable Long id, @RequestBody boolean isComplete) {
         LigneCommande updatedLigneCommande = ligneCommandeService.updateLigneCommande(id, isComplete);
+        Long  commande_id=updatedLigneCommande.getCommande().getId();
+        Commande commande=commandeReposotory.getById(commande_id);
+        commande.setStatutCommande(true);
+        commandeService.updateCommande(commande_id, commande, commande.getUser());
         return new ResponseEntity<>(updatedLigneCommande, HttpStatus.OK);
     }
     
